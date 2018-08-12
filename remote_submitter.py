@@ -37,8 +37,8 @@ if __name__ == "__main__":
     parser.add_argument('-a', help='agent type', choices=['random'], required=True, type=str, dest='agent')
 
     args = parser.parse_args()
-    token = args.t
-    agent_type = args.a
+    token = args.token
+    agent_type = args.agent
 
     try:
         submitter = RemoteSubmit(token=token, agent_type=agent_type)

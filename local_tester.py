@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('-a', help="agent type", choices=['random'], required=True, type=str, dest='agent')
 
     args = parser.parse_args()
-    agent_type = args.a
+    agent_type = args.agent
 
     try:
         tester = LocalTester(agent_type=agent_type)
