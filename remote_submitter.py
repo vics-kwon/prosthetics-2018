@@ -1,6 +1,9 @@
+from fixed_action_agent import FixedActionAgent
 from random_agent import RandomAgent
+
 from osim.http.client import Client
 import argparse
+import json
 
 
 class RemoteSubmit(object):
@@ -12,8 +15,14 @@ class RemoteSubmit(object):
         # TODO:: Add agent selector
         if agent_type == 'random':
             self.agent = RandomAgent()
+        elif agent_type == 'fixed-action':
+            self.agent = FixedActionAgent()
         else:
-            raise Exception('Not supported agent-type')
+            status = {
+                'status': 'ERROR',
+                'error_msg': 'Not supported agent-type'
+            }
+            raise Exception(status)
 
     def run(self):
         try:
@@ -27,14 +36,19 @@ class RemoteSubmit(object):
                     if not observation:
                         break
             self.client.submit()
+
         except Exception as e:
-            raise e
+            status = {
+                'status': 'ERROR',
+                'error_msg': e
+            }
+            raise Exception(status)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Remote Submit to CrowdAI')
     parser.add_argument('-t', help='private token of CrowdAI', required=True, type=str, dest='token')
-    parser.add_argument('-a', help='agent type', choices=['random'], required=True, type=str, dest='agent')
+    parser.add_argument('-a', help='agent type', choices=['random', 'fixed-action'], required=True, type=str, dest='agent')
 
     args = parser.parse_args()
     token = args.token
@@ -44,4 +58,4 @@ if __name__ == "__main__":
         submitter = RemoteSubmit(token=token, agent_type=agent_type)
         submitter.run()
     except Exception as e:
-        print(e)
+        print(json.dumps(e, indent=2))
