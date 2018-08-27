@@ -1,4 +1,4 @@
-from agent import AgentClass
+from agent.agent_ import AgentClass
 
 
 class RandomAgent(AgentClass):

@@ -1,5 +1,4 @@
-from fixed_action_agent import FixedActionAgent
-from random_agent import RandomAgent
+from agent import FixedActionAgent, RandomAgent
 
 from osim.http.client import Client
 import argparse

@@ -1,6 +1,5 @@
+from agent import FixedActionAgent, RandomAgent
 from local_tester import LocalTester
-from random_agent import RandomAgent
-from fixed_action_agent import FixedActionAgent
 
 from osim.env import ProstheticsEnv
 from unittest import TestCase
@@ -9,7 +8,7 @@ import json
 
 class TestLocalTester(TestCase):
     def test_LocalTester(self):
-        agent_type1 = 'zero'
+        agent_type1 = 'fixed-action'
         tester1 = LocalTester(agent_type=agent_type1)
         status1 = tester1.run()
         print(json.dumps(status1, indent=2))

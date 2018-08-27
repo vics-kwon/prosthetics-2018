@@ -3,7 +3,7 @@ Thanks to Ryan :)
 https://github.com/seungjaeryanlee/osim-rl-helper/blob/master/helper/baselines/FixedActionAgent.py
 '''
 
-from agent import AgentClass
+from agent.agent_ import AgentClass
 
 
 class FixedActionAgent(AgentClass):
