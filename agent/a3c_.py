@@ -14,10 +14,11 @@ from utils.multiprocessing_env import SubprocVecEnv
 class A3CAgent(object):
     def __init__(self):
         self.use_cuda = torch.cuda.is_available()
-        self.device = torch.device("cuda" if self.use_cuda else "cpu")
+        # self.device = torch.device("cuda" if self.use_cuda else "cpu")
+        self.device = 'cpu'
         self.env = ProstheticsEnv(visualize=False)
 
-        self.num_envs = 1
+        self.num_envs = 2
 
         self.envs = [self.make_env() for i in range(self.num_envs)]
         self.envs = SubprocVecEnv(self.envs)
