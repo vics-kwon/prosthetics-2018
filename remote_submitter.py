@@ -60,4 +60,4 @@ if __name__ == "__main__":
         submitter = RemoteSubmit(token=token, agent_type=agent_type)
         submitter.run()
     except Exception as e:
-        print(json.dumps(e, indent=2))
+        print(json.dumps(str(e), indent=2))

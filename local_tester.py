@@ -44,4 +44,4 @@ if __name__ == "__main__":
         status = tester.run()
         print(json.dumps(status, indent=2))
     except Exception as e:
-        print(json.dumps(e, indent=2))
+        print(json.dumps(str(e), indent=2))
