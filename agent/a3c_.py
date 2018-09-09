@@ -17,7 +17,7 @@ class A3CAgent(object):
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
         self.env = ProstheticsEnv(visualize=False)
 
-        self.num_envs = 2
+        self.num_envs = 1
 
         self.envs = [self.make_env() for i in range(self.num_envs)]
         self.envs = SubprocVecEnv(self.envs)
