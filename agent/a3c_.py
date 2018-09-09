@@ -59,10 +59,10 @@ class A3CAgent(object):
                 state = torch.FloatTensor(state).to(self.device)
                 action, value = self.model(state)
                 if self.device == 'cuda':
-                    action = action.cpu().numpy()
+                    action_ = action.cpu().numpy()
                 if self.device == 'cpu':
-                    action = action.data.numpy()
-                next_state, reward, done, _ = self.envs.step(action)
+                    action_ = action.data.numpy()
+                next_state, reward, done, _ = self.envs.step(action_)
 
                 log_prob = F.log_softmax(action, dim=1)
                 entropy += log_prob.mean()
@@ -109,11 +109,11 @@ class A3CAgent(object):
             action, _ = self.model(state)
 
             if self.device == 'cuda':
-                action = action.cpu().numpy()
+                action_ = action.cpu().numpy()
             if self.device == 'cpu':
-                action = action.data.numpy()
+                action_ = action.data.numpy()
 
-            next_state, reward, done, _ = self.env.step(action)
+            next_state, reward, done, _ = self.env.step(action_)
             state = next_state
             if vis: self.env.render()
             total_reward += reward
