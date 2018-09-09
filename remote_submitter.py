@@ -1,4 +1,4 @@
-from agent import FixedActionAgent, RandomAgent
+from agent import FixedActionAgent, RandomAgent, A3CAgent
 
 from osim.http.client import Client
 import argparse
@@ -16,6 +16,8 @@ class RemoteSubmit(object):
             self.agent = RandomAgent()
         elif agent_type == 'fixed-action':
             self.agent = FixedActionAgent()
+        elif agent_type == 'a3c':
+            self.agent = A3CAgent()
         else:
             status = {
                 'status': 'ERROR',
@@ -25,6 +27,7 @@ class RemoteSubmit(object):
 
     def run(self):
         try:
+            status = self.agent.run()
             observation = self.client.env_create(self.token, env_id="ProstheticsEnv")
 
             while True:
@@ -47,7 +50,7 @@ class RemoteSubmit(object):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Remote Submit to CrowdAI')
     parser.add_argument('-t', help='private token of CrowdAI', required=True, type=str, dest='token')
-    parser.add_argument('-a', help='agent type', choices=['random', 'fixed-action'], required=True, type=str, dest='agent')
+    parser.add_argument('-a', help='agent type', choices=['random', 'fixed-action', 'a3c'], required=True, type=str, dest='agent')
 
     args = parser.parse_args()
     token = args.token
