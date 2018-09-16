@@ -17,7 +17,7 @@ class RemoteSubmit(object):
         elif agent_type == 'fixed-action':
             self.agent = FixedActionAgent()
         elif agent_type == 'a3c':
-            self.agent = A3CAgent()
+            self.agent = A3CAgent(num_envs=2, num_steps=50, max_frames=1000)
         else:
             status = {
                 'status': 'ERROR',

@@ -31,3 +31,11 @@ class TestLocalTester(TestCase):
         status = tester.run()
         print(json.dumps(status, indent=2))
         self.assertEqual(status['status'], 'DONE')
+
+    def test_A2CAgent(self):
+        agent_type = 'a2c'
+        tester = LocalTester(agent_type=agent_type)
+        status = tester.run()
+        print(json.dumps(status, indent=2))
+        self.assertEqual(status['status'], 'DONE')
+

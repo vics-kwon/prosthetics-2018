@@ -8,28 +8,22 @@ import torch.optim as optim
 import torch.nn.functional as F
 from osim.env import ProstheticsEnv
 
-from utils.multiprocessing_env import SubprocVecEnv
 
-
-class A3CAgent(object):
-    def __init__(self, num_envs, num_steps, max_frames):
+class A2CAgent(object):
+    def __init__(self, num_steps, max_frames):
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
         self.env = ProstheticsEnv(visualize=False)
 
-        self.num_envs = num_envs
         self.num_steps = num_steps
         self.max_frames = max_frames
 
-        self.envs = [self.make_env() for i in range(self.num_envs)]
-        self.envs = SubprocVecEnv(self.envs)
-
         # num_inputs = self.envs.observation_space.shape[0]  # 158
         num_inputs = 160
-        num_outputs = self.envs.action_space.shape[0]  # 19
+        num_outputs = self.env.action_space.shape[0]  # 19
         hidden_size = 256
 
-        self.model = A3CWorker(num_inputs, num_outputs, hidden_size).to(self.device)
+        self.model = A2CWorker(num_inputs, num_outputs, hidden_size).to(self.device)
         self.optimizer = optim.Adam(self.model.parameters())
 
     def run(self):
@@ -41,11 +35,10 @@ class A3CAgent(object):
         }
 
     def __run(self):
-        lr = 3e-4
         frame_idx = 0
         test_rewards = []
 
-        state = self.envs.reset()
+        state = self.env.reset()
         while frame_idx < self.max_frames:
             log_probs = []
             values = []
@@ -58,15 +51,15 @@ class A3CAgent(object):
                 action, value = self.model(state)
 
                 action_n = action.data.cpu().numpy()
-                next_state, reward, done, _ = self.envs.step(action_n)
+                next_state, reward, done, _ = self.env.step(action_n)
 
-                log_prob = F.log_softmax(action, dim=1)
+                log_prob = torch.unsqueeze(F.log_softmax(action, dim=0), dim=0)
                 entropy += log_prob.mean()
 
                 log_probs.append(log_prob)
                 values.append(value)
-                rewards.append(torch.FloatTensor(reward).unsqueeze(1).to(self.device))
-                masks.append(torch.FloatTensor(1 - done).unsqueeze(1).to(self.device))
+                rewards.append(reward)
+                masks.append(1-done)
 
                 state = next_state
                 frame_idx += 1
@@ -85,7 +78,7 @@ class A3CAgent(object):
             returns = torch.cat(returns).detach()
             values = torch.cat(values)
 
-            advantage = returns - values
+            advantage = torch.unsqueeze(returns - values, dim=1)
 
             actor_loss = -(log_probs * advantage.detach()).mean()
             critic_loss = advantage.pow(2).mean()
@@ -136,9 +129,9 @@ class A3CAgent(object):
         return returns
 
 
-class A3CWorker(nn.Module):
+class A2CWorker(nn.Module):
     def __init__(self, num_inputs, num_outputs, hidden_size):
-        super(A3CWorker, self).__init__()
+        super(A2CWorker, self).__init__()
 
         self.critic = nn.Sequential(
             nn.Linear(num_inputs, hidden_size),

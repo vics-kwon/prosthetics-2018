@@ -1,4 +1,4 @@
-from agent import FixedActionAgent, RandomAgent, A3CAgent
+from agent import FixedActionAgent, RandomAgent, A2CAgent, A3CAgent
 
 import argparse
 import json
@@ -11,8 +11,10 @@ class LocalTester(object):
             self.agent = RandomAgent()
         elif agent_type == 'fixed-action':
             self.agent = FixedActionAgent()
+        elif agent_type == 'a2c':
+            self.agent = A2CAgent(num_steps=50, max_frames=1000)
         elif agent_type == 'a3c':
-            self.agent = A3CAgent()
+            self.agent = A3CAgent(num_envs=1, num_steps=50, max_frames=1000)
         else:
             status = {
                 'status': 'ERROR',
@@ -34,7 +36,7 @@ class LocalTester(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Local tester to CrowdAI')
-    parser.add_argument('-a', help="agent type", choices=['random', 'fixed-action', 'a3c'], required=True, type=str, dest='agent')
+    parser.add_argument('-a', help="agent type", choices=['random', 'fixed-action', 'a3c', 'a2c'], required=True, type=str, dest='agent')
 
     args = parser.parse_args()
     agent_type = args.agent
